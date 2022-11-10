@@ -2,6 +2,7 @@ class CoreImages {
   static String backTopRight = "assets/images/top-right.png";
   // static String backBotImages = "assets/images/bot.png";
   static String backBotImages = "assets/images/back-bot.png";
+  static String layerImages = "assets/images/layer.png";
   static String backTopImages = "assets/images/back-top.png";
   static String fingerLottie = "assets/lotties/fingerprint.json";
   static String attendanceLottie = "assets/lotties/attendance.json";

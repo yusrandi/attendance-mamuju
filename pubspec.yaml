@@ -13,6 +13,13 @@ dependencies:
   google_maps_flutter: ^2.1.10
   slide_to_act: ^2.0.1
   syncfusion_flutter_charts: ^20.2.43
+  camera: ^0.10.0+4
+  intl: 0.17.0
+  geolocator: 9.0.2
+  geocoding: 2.0.5
+  location: ^4.4.0
+  flutter_map: ^3.0.0
+  latlong2: ^0.8.1
 
   flutter:
     sdk: flutter

@@ -2,7 +2,7 @@ import 'package:attendance/app/cores/core_colors.dart';
 import 'package:attendance/app/cores/core_images.dart';
 import 'package:attendance/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -46,26 +46,30 @@ class HomeView extends GetView<HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "12:30",
+                        "${DateTime.now().hour}:${DateTime.now().minute}",
                         style: CoreStyles.uTitle.copyWith(
                             color: CoreColor.kTextColor, fontSize: 46),
                       ),
                       Text(
-                        "Wednesday, April 14",
+                        DateFormat("EEEE, d MMMM yyyy", "id_ID")
+                            .format(DateTime.now()),
                         style: CoreStyles.uSubTitle,
                       ),
                       const SizedBox(height: 16),
                       GestureDetector(
                           onTap: () {
-                            homeController.increment();
-                            Get.toNamed(Routes.ATTENDANCE);
+                            // homeController.increment();
+                            Get.toNamed(Routes.ATTENDANCE, arguments: [
+                              homeController.latPos.value,
+                              homeController.lngPos.value
+                            ]);
                           },
                           child: Obx(
                             () => Container(
                               width: 250,
                               height: 250,
                               decoration: BoxDecoration(
-                                gradient: homeController.count.value == 0
+                                gradient: homeController.count.value == 1
                                     ? CoreColor.linearGradient
                                     : CoreColor.linearGradientEnd,
                                 shape: BoxShape.circle,
@@ -98,10 +102,13 @@ class HomeView extends GetView<HomeController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.location_history),
-                          SizedBox(width: 16),
-                          Text(
-                            "Jln. Poros Barru - Bulu Dua, Soppeng, Makassar",
-                            style: CoreStyles.uContent,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Obx(() => Text(
+                                  homeController.address.value,
+                                  maxLines: 1,
+                                  style: CoreStyles.uContent,
+                                )),
                           ),
                         ],
                       ),

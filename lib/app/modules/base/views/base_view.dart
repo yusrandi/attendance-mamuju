@@ -13,7 +13,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../cores/core_colors.dart';
-import '../../attendance/controllers/attendance_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../controllers/base_controller.dart';
 
@@ -21,8 +20,6 @@ class BaseView extends GetView<BaseController> {
   BaseView({Key? key}) : super(key: key);
   final BaseController baseController = Get.put(BaseController());
   final HomeController homeController = Get.put(HomeController());
-  final AttendanceController attendanceController =
-      Get.put(AttendanceController());
 
   final SettingController settingController = Get.put(SettingController());
   final HistoryController historyController = Get.put(HistoryController());
