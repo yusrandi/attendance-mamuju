@@ -98,18 +98,16 @@ class HomeView extends GetView<HomeController> {
                             ),
                           )),
                       const SizedBox(height: 16),
-                      Row(
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.location_history),
                           const SizedBox(width: 16),
-                          Expanded(
-                            child: Obx(() => Text(
-                                  homeController.address.value,
-                                  maxLines: 1,
-                                  style: CoreStyles.uContent,
-                                )),
-                          ),
+                          Obx(() => Text(
+                                homeController.address.value,
+                                maxLines: 1,
+                                style: Theme.of(context).textTheme.caption,
+                              )),
                         ],
                       ),
                     ],

@@ -44,13 +44,13 @@ class AuthView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: CoreColor.primary,
       body: Column(
         children: [
           Expanded(
               child: Container(
             padding: const EdgeInsets.all(16),
-            child: Center(child: Lottie.asset(CoreImages.purpleLottie)),
+            child: Center(child: Lottie.asset(CoreImages.attendanceLottie)),
           )),
           Expanded(
               child: Container(

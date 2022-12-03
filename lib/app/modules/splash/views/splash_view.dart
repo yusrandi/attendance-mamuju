@@ -1,3 +1,4 @@
+import 'package:attendance/app/cores/core_colors.dart';
 import 'package:attendance/app/cores/core_images.dart';
 import 'package:attendance/app/cores/core_styles.dart';
 import 'package:attendance/app/routes/app_pages.dart';
@@ -34,7 +35,7 @@ class SplashView extends GetView<SplashController> {
                     style: CoreStyles.uSubTitle.copyWith(color: Colors.black)),
               ],
             ),
-            Expanded(child: Lottie.asset(CoreImages.purpleLottie)),
+            Expanded(child: Lottie.asset(CoreImages.attendanceLottie)),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,11 +64,10 @@ class SplashView extends GetView<SplashController> {
                       //     () => Get.offAndToNamed(Routes.AUTH));
                     },
                     alignment: Alignment.centerRight,
-                    sliderButtonIcon: const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.deepPurple),
+                    sliderButtonIcon: Icon(Icons.arrow_forward_ios_rounded,
+                        color: CoreColor.primary),
                     innerColor: Colors.white,
-                    outerColor: Colors.deepPurple,
+                    outerColor: CoreColor.primary,
                     borderRadius: 16,
                     child: const Text(
                       ' Swipe Right to SIGN IN',

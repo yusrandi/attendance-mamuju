@@ -56,7 +56,7 @@ class HistoryView extends GetView<HistoryController> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(32),
                             color: index == 0
-                                ? Colors.deepPurple.shade200
+                                ? CoreColor.primarySoft
                                 : Colors.black12),
                         child: Row(
                           children: [
@@ -67,7 +67,7 @@ class HistoryView extends GetView<HistoryController> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(32),
                                   color: index == 0
-                                      ? Colors.deepPurple
+                                      ? CoreColor.primary
                                       : Colors.white),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,

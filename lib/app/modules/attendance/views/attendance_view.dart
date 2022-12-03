@@ -81,7 +81,7 @@ class AttendanceView extends GetView<AttendanceController> {
           bottom: size.height * 0.45,
           right: 16,
           child: FloatingActionButton(
-            backgroundColor: Colors.deepPurple,
+            backgroundColor: CoreColor.primary,
             onPressed: () async {
               await attendanceController.getGeoLocationPosition();
             },
@@ -219,7 +219,7 @@ class AttendanceView extends GetView<AttendanceController> {
         //         builder: (BuildContext context) {
         //           return Scaffold(
         //             appBar: AppBar(
-        //               backgroundColor: Colors.deepPurple,
+        //               backgroundColor: CoreColor.primary,
         //               title: const Text("Pilih Status Absen"),
         //               elevation: 0,
         //             ),
@@ -398,7 +398,7 @@ class AttendanceView extends GetView<AttendanceController> {
                                     Navigator.pop(context, false);
                                   }
                                 },
-                                backgroundColor: Colors.deepPurple,
+                                backgroundColor: CoreColor.primary,
                               ),
                             )),
                       ],
@@ -417,7 +417,7 @@ class AttendanceView extends GetView<AttendanceController> {
       () => attendanceController.status == Status.running
           ? Center(
               child: CircularProgressIndicator(
-                color: Colors.deepPurple,
+                color: CoreColor.primary,
               ),
             )
           : Container(
@@ -441,11 +441,10 @@ class AttendanceView extends GetView<AttendanceController> {
                         color: Colors.white,
                       ),
                     ),
-                    sliderButtonIcon: const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.deepPurple),
+                    sliderButtonIcon: Icon(Icons.arrow_forward_ios_rounded,
+                        color: CoreColor.primary),
                     innerColor: Colors.white,
-                    outerColor: Colors.deepPurple,
+                    outerColor: CoreColor.primary,
                     borderRadius: 16,
                   );
                 },

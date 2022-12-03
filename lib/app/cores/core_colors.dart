@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 
 class CoreColor {
   // static Color primary = Color(0xFF52c234);
-  static Color primary = Colors.deepPurple;
-  static Color primarySoft = Color(0xFF695DDC);
+  static Color primary = Colors.blue.shade900;
+  static Color primarySoft = Color(0xFF0575E6);
   static Color primaryExtraSoft = Color(0xFF018749);
   static Color secondary = Color(0xFF061700);
   static Color whiteSoft = Color(0xFFF8F8F8);
   static Color kTextColor = Color(0xFF757575);
   static Color kHintTextColor = Color(0xFFBB9B9B9);
+  static Color gradient1 = Color(0xFF021B79);
+  static Color gradient2 = Color(0xFF302b63);
+  static Color gradient3 = Color(0xFF0575E6);
 
   static LinearGradient linearGradient = LinearGradient(
-      colors: [Color(0xFFA4508B), Color(0xFF5F0A87)],
+      colors: [gradient1, gradient2, gradient3],
       begin: Alignment.topRight,
       end: Alignment.bottomLeft);
   static LinearGradient linearGradientEnd = LinearGradient(
