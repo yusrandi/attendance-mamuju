@@ -1,5 +1,6 @@
 import 'package:attendance/app/cores/core_colors.dart';
 import 'package:attendance/app/cores/core_images.dart';
+import 'package:attendance/app/data/models/offices_model.dart';
 import 'package:attendance/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,10 +40,12 @@ class HomeView extends GetView<HomeController> {
           Container(
             padding: const EdgeInsets.all(16),
             height: double.infinity,
+            width: double.infinity,
             child: Column(
               children: [
                 Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -113,44 +116,57 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Icon(
-                          Icons.access_alarms_rounded,
-                          color: CoreColor.primary,
-                        ),
-                        Text(
-                          "19:10",
-                          style: CoreStyles.uSubTitle.copyWith(
-                              color: Colors.black, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "clock in",
-                          style: CoreStyles.uContent,
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Icon(
-                          Icons.access_alarms_rounded,
-                          color: CoreColor.primary,
-                        ),
-                        Text(
-                          "19:10",
-                          style: CoreStyles.uSubTitle.copyWith(
-                              color: Colors.black, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "clock out",
-                          style: CoreStyles.uContent,
-                        )
-                      ],
-                    ),
-                  ],
+                FutureBuilder<OfficeModel>(
+                  future: homeController.getOffice(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      OfficeModel model = snapshot.data!;
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.access_alarms_rounded,
+                                color: CoreColor.primary,
+                              ),
+                              Text(
+                                model.absens!.first.begin!,
+                                style: CoreStyles.uSubTitle.copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              Text(
+                                "clock in",
+                                style: CoreStyles.uContent,
+                              )
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.access_alarms_rounded,
+                                color: CoreColor.primary,
+                              ),
+                              Text(
+                                model.absens!.last.begin!,
+                                style: CoreStyles.uSubTitle.copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              Text(
+                                "clock out",
+                                style: CoreStyles.uContent,
+                              )
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(height: 120)
               ],

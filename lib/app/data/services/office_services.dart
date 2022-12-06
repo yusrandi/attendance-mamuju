@@ -13,7 +13,7 @@ class OfficeService extends GetConnect {
     var res = await http.get(url);
     List data = (json.decode(res.body) as Map<String, dynamic>)["data"];
 
-    print(data);
+    // print(data);
 
     if (data.isEmpty) {
       return [];
@@ -27,7 +27,7 @@ class OfficeService extends GetConnect {
 
     var res = await http.get(url);
 
-    print(res.body);
+    // print(res.body);
 
     return OfficeModel.fromJson(json.decode(res.body)['data']);
   }

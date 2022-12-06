@@ -3,6 +3,10 @@ import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../data/models/offices_model.dart';
+import '../../../data/services/office_services.dart';
+import '../../auth/controllers/authentication_manager.dart';
+
 class HomeController extends GetxController {
   final String TAG = "HomeController";
   RxInt count = 0.obs;
@@ -11,10 +15,13 @@ class HomeController extends GetxController {
   RxDouble latPos = 0.0.obs;
   RxDouble lngPos = 0.0.obs;
 
+  final AuthenticationManager _authManager = Get.put(AuthenticationManager());
+
   @override
   void onInit() async {
     super.onInit();
 
+    print('User Phone ${_authManager.getToken()}');
     Position position = await getGeoLocationPosition();
     count.value = 1;
     print(
@@ -48,6 +55,13 @@ class HomeController extends GetxController {
 
   void increment() {
     count.value = count.value == 0 ? 1 : 0;
+  }
+
+  Future<OfficeModel> getOffice() async {
+    OfficeModel model =
+        await OfficeService().fetchOfficesByUserId(_authManager.getToken()!);
+
+    return model;
   }
 
   Future<Position> getGeoLocationPosition() async {

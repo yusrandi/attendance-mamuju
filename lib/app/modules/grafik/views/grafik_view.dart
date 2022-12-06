@@ -12,9 +12,9 @@ class GrafikView extends GetView<GrafikController> {
   @override
   Widget build(BuildContext context) {
     final List<ChartData> chartData = [
-      ChartData('David', 10, Colors.red),
-      ChartData('Steve', 20, Colors.purple),
-      ChartData('Others', 70, Colors.deepPurple),
+      ChartData('David', 10, Colors.red.shade900),
+      ChartData('Steve', 20, CoreColor.primarySoft),
+      ChartData('Others', 70, CoreColor.primary),
     ];
 
     final List<ChartData> data = [
@@ -113,19 +113,19 @@ class GrafikView extends GetView<GrafikController> {
                             xValueMapper: (ChartData data, _) => data.x,
                             yValueMapper: (ChartData data, _) => data.y,
                             name: 'Hadir',
-                            color: Colors.deepPurple),
+                            color: CoreColor.primary),
                         ColumnSeries<ChartData, String>(
                             dataSource: data1,
                             xValueMapper: (ChartData data, _) => data.x,
                             yValueMapper: (ChartData data, _) => data.y,
                             name: 'Izin',
-                            color: Colors.green),
+                            color: Colors.green.shade800),
                         ColumnSeries<ChartData, String>(
                             dataSource: data2,
                             xValueMapper: (ChartData data, _) => data.x,
                             yValueMapper: (ChartData data, _) => data.y,
                             name: 'Alpa',
-                            color: Colors.red),
+                            color: Colors.red.shade800),
                       ]),
                 )
               ],

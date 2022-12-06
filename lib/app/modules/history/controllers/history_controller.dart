@@ -1,14 +1,26 @@
+import 'package:attendance/app/data/models/presensi_model.dart';
+import 'package:attendance/app/data/services/presensi_services.dart';
 import 'package:get/get.dart';
+
+import '../../auth/controllers/authentication_manager.dart';
 
 class HistoryController extends GetxController {
   RxInt count = 7.obs;
 
   RxList<MonthModel> listMonth = (List<MonthModel>.of([])).obs;
+  RxList<Presensi> listPresensi = (List<Presensi>.of([])).obs;
+  final AuthenticationManager _authManager = Get.put(AuthenticationManager());
+
+  RxString month = "...".obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     initModel();
+    PresensiModel model = await getPresensiThisMonthByNip();
+    month.value = model.month!;
+    count.value = int.parse(model.monthnumber!) - 1;
+    listPresensi.addAll(model.presensi!);
   }
 
   initModel() {
@@ -38,6 +50,11 @@ class HistoryController extends GetxController {
 
   void increment() => count.value++;
   void decrement() => count.value--;
+
+  Future<PresensiModel> getPresensiThisMonthByNip() async {
+    return await PresensiService()
+        .fetchPresensiThisMonthByUserNip(_authManager.getToken()!);
+  }
 }
 
 class MonthModel {

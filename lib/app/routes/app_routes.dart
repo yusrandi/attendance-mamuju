@@ -12,6 +12,7 @@ abstract class Routes {
   static const AUTH = _Paths.AUTH;
   static const GRAFIK = _Paths.GRAFIK;
   static const SELFI = _Paths.SELFI;
+  static const OTP = _Paths.OTP;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const AUTH = '/auth';
   static const GRAFIK = '/grafik';
   static const SELFI = '/selfi';
+  static const OTP = '/otp';
 }

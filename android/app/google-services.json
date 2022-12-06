@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "397492701622",
+    "project_id": "coba-218009",
+    "storage_bucket": "coba-218009.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397492701622:android:649aedc346e57e0c3bd917",
+        "android_client_info": {
+          "package_name": "com.use.attendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397492701622-fffkg2crnokpq7dktuk7l5ii8ulu86at.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.use.attendance",
+            "certificate_hash": "af9127bdc48677373e7de95b8fb26deaea238e48"
+          }
+        },
+        {
+          "client_id": "397492701622-0bt3eqg8d8rr86gf7nhkn2a10vllb814.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4JMPEFWo6c5NvNwgjIabTAF_1b3KlMFA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397492701622-0bt3eqg8d8rr86gf7nhkn2a10vllb814.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "397492701622-f13r48554ckttgkllse0ugfu3bvf7g10.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.use.mbcMobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397492701622:android:dc4b6cce165408c83bd917",
+        "android_client_info": {
+          "package_name": "com.use.emeeting_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397492701622-36b60v6ojua379lrlu8atjrppar6lkk6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.use.emeeting_flutter",
+            "certificate_hash": "a8e1b00a8387ee1d5d510072a5bb3c9eb658433e"
+          }
+        },
+        {
+          "client_id": "397492701622-mn5siv0a5prcgj22jbpjdpuoldlj94qh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.use.emeeting_flutter",
+            "certificate_hash": "65203371336e0d98847dc3dd981dea3791bf4894"
+          }
+        },
+        {
+          "client_id": "397492701622-0bt3eqg8d8rr86gf7nhkn2a10vllb814.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4JMPEFWo6c5NvNwgjIabTAF_1b3KlMFA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397492701622-0bt3eqg8d8rr86gf7nhkn2a10vllb814.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "397492701622-f13r48554ckttgkllse0ugfu3bvf7g10.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.use.mbcMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

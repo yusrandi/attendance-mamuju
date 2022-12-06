@@ -1,5 +1,6 @@
 import 'package:attendance/app/cores/core_colors.dart';
 import 'package:attendance/app/cores/core_images.dart';
+import 'package:attendance/app/cores/core_strings.dart';
 import 'package:attendance/app/cores/core_styles.dart';
 import 'package:attendance/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +9,12 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
+import '../../auth/controllers/authentication_manager.dart';
 import '../controllers/splash_controller.dart';
 
 class SplashView extends GetView<SplashController> {
-  const SplashView({Key? key}) : super(key: key);
+  SplashView({Key? key}) : super(key: key);
+  final AuthenticationManager _authManager = Get.put(AuthenticationManager());
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -28,10 +31,10 @@ class SplashView extends GetView<SplashController> {
             Column(
               children: [
                 Text(
-                  "eAttendance",
+                  CoreStrings.appName,
                   style: CoreStyles.uTitle.copyWith(color: Colors.black),
                 ),
-                Text("easy way to record & track attendance",
+                Text(CoreStrings.welcomeTitle,
                     style: CoreStyles.uSubTitle.copyWith(color: Colors.black)),
               ],
             ),
@@ -41,7 +44,7 @@ class SplashView extends GetView<SplashController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Mark Attendance",
+                  CoreStrings.appName,
                   style: CoreStyles.uTitle.copyWith(color: Colors.black),
                 ),
                 Text(
@@ -59,7 +62,12 @@ class SplashView extends GetView<SplashController> {
                   return SlideAction(
                     key: _key,
                     onSubmit: () {
-                      Get.offAndToNamed(Routes.AUTH);
+                      if (_authManager.getToken() == null) {
+                        Get.offAndToNamed(Routes.AUTH);
+                      } else {
+                        print(_authManager.getToken());
+                        Get.offAndToNamed(Routes.BASE);
+                      }
                       // Future.delayed(Duration(seconds: 1),
                       //     () => Get.offAndToNamed(Routes.AUTH));
                     },

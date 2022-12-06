@@ -1,3 +1,4 @@
+import 'package:attendance/app/data/models/presensi_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -50,6 +51,7 @@ class HistoryView extends GetView<HistoryController> {
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
+                      Presensi presensi = historyController.listPresensi[index];
                       return Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16),
                         height: 100,
@@ -73,7 +75,7 @@ class HistoryView extends GetView<HistoryController> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "${index + 1 * 10} ",
+                                    presensi.tanggal!,
                                     style: CoreStyles.uTitle.copyWith(
                                         fontSize: 20,
                                         color: index != 0
@@ -81,7 +83,7 @@ class HistoryView extends GetView<HistoryController> {
                                             : Colors.white),
                                   ),
                                   Text(
-                                    "Sen",
+                                    presensi.hari!,
                                     style: CoreStyles.uTitle.copyWith(
                                         fontSize: 20,
                                         color: index != 0
@@ -103,7 +105,9 @@ class HistoryView extends GetView<HistoryController> {
                                             : Colors.white),
                                   ),
                                   Text(
-                                    "08:00",
+                                    presensi.masuk! == '-'
+                                        ? presensi.leaves!
+                                        : presensi.masuk!,
                                     style: CoreStyles.uSubTitle.copyWith(
                                         color: index != 0
                                             ? CoreColor.kTextColor
@@ -124,7 +128,9 @@ class HistoryView extends GetView<HistoryController> {
                                             : Colors.white),
                                   ),
                                   Text(
-                                    "14:00",
+                                    presensi.pulang! == '-'
+                                        ? presensi.leaves!
+                                        : presensi.pulang!,
                                     style: CoreStyles.uSubTitle.copyWith(
                                         color: index != 0
                                             ? CoreColor.kTextColor
@@ -139,7 +145,7 @@ class HistoryView extends GetView<HistoryController> {
                     },
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 16),
-                    itemCount: 11),
+                    itemCount: historyController.listPresensi.length),
               )),
               const SizedBox(height: 50),
             ],

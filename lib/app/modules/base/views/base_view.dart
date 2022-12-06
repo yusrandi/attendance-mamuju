@@ -54,15 +54,21 @@ class BaseView extends GetView<BaseController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'My Attendance',
-                    style: CoreStyles.uTitle,
+                  Row(
+                    children: [
+                      Image.asset(CoreImages.logoMamujuImages, height: 30),
+                      const SizedBox(width: 16),
+                      Text(
+                        'SIKEREN',
+                        style: CoreStyles.uTitle,
+                      ),
+                    ],
                   ),
-                  SvgPicture.asset(
-                    "assets/icons/settings.svg",
-                    color: CoreColor.kHintTextColor,
-                    height: 30,
-                  ),
+                  // SvgPicture.asset(
+                  //   "assets/icons/settings.svg",
+                  //   color: CoreColor.kHintTextColor,
+                  //   height: 30,
+                  // ),
                 ],
               ),
             ),

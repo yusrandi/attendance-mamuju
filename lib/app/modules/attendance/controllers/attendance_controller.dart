@@ -28,6 +28,8 @@ class AttendanceController extends GetxController {
   RxDouble lngPos = 0.0.obs;
   RxDouble zoomPos = 17.0.obs;
   RxString address = "...".obs;
+  RxString clockIn = "...".obs;
+  RxString clockOut = "...".obs;
 
   // Map<CircleId, Circle> circles = <CircleId, Circle>{}.obs;
   // Map<MarkerId, Marker> markers = <MarkerId, Marker>{}.obs;
@@ -58,6 +60,9 @@ class AttendanceController extends GetxController {
     print("lat $userLatitude, long $userLongitude");
 
     OfficeModel model = await getOffice();
+
+    clockIn.value = model.absens!.first.begin!;
+    clockOut.value = model.absens!.last.begin!;
 
     var officeSplit = model.location!.split(',');
     latPos.value = officeSplit[0];
@@ -251,7 +256,7 @@ class AttendanceController extends GetxController {
     status.value = Status.running;
 
     OfficeModel model =
-        await OfficeService().fetchOfficesByUserId(2.toString());
+        await OfficeService().fetchOfficesByUserId(3.toString());
 
     status.value = Status.stopped;
 
@@ -265,7 +270,7 @@ class AttendanceController extends GetxController {
     // print(file);
 
     await AttendanceService().attendanceStore(
-        File(imagePath.value), '2', '1234', '$userLat,$userLng');
+        File(imagePath.value), '3', '1234', '$userLat,$userLng');
     status.value = Status.stopped;
 
     return "";

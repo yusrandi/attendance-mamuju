@@ -252,10 +252,12 @@ class AttendanceView extends GetView<AttendanceController> {
                       .copyWith(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  '08:00',
-                  style: CoreStyles.uContent
-                      .copyWith(fontSize: 14, color: CoreColor.primary),
+                Obx(
+                  () => Text(
+                    attendanceController.clockIn.value,
+                    style: CoreStyles.uContent
+                        .copyWith(fontSize: 14, color: Colors.red),
+                  ),
                 ),
               ],
             ),
@@ -268,10 +270,12 @@ class AttendanceView extends GetView<AttendanceController> {
                       .copyWith(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  '16:00',
-                  style: CoreStyles.uContent
-                      .copyWith(fontSize: 14, color: Colors.red),
+                Obx(
+                  () => Text(
+                    attendanceController.clockOut.value,
+                    style: CoreStyles.uContent
+                        .copyWith(fontSize: 14, color: Colors.red),
+                  ),
                 ),
               ],
             ),
