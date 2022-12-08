@@ -23,7 +23,7 @@ class AuthController extends GetxController {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   String verificationIdReeceived = "";
-  String phoneNumber = "+6281779817782";
+  String phoneNumberResult = "";
   String phoneId = "";
 
   late final AuthenticationManager _authManager =
@@ -53,7 +53,7 @@ class AuthController extends GetxController {
   verifyPhoneNumber(String phoneNumber) {
     status.value = Status.running;
     count.value = 1;
-    phoneNumber = phoneNumber;
+    phoneNumberResult = phoneNumber;
 
     auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -102,7 +102,7 @@ class AuthController extends GetxController {
             status.value = Status.none,
             print('you are logged in successfully'),
             count.value = 2,
-            loginUser(phoneNumber, phoneId)
+            loginUser(phoneNumberResult, phoneId)
           });
     } on PlatformException catch (e) {
       if (e.message!.contains(
@@ -115,6 +115,7 @@ class AuthController extends GetxController {
   }
 
   Future<String> loginUser(String phone, String device) async {
+    print('Phone $phoneNumberResult, device $device');
     status.value = Status.running;
     var _response = await http.post(Uri.parse(Api().loginUrl), body: {
       "phone": phone,

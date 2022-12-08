@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import 'package:attendance/app/data/models/offices_model.dart';
 import 'package:attendance/app/data/services/attendance_service.dart';
 import 'package:attendance/app/data/services/office_services.dart';
+import 'package:attendance/app/modules/auth/controllers/authentication_manager.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,8 @@ class AttendanceController extends GetxController {
   final String TAG = "AttendanceController";
 
   Rx<Status> status = Status.running.obs;
+  final AuthenticationManager _authenticationManager =
+      Get.put(AuthenticationManager());
 
   final count = 0.obs;
   RxString latPos = "".obs;
@@ -255,8 +258,8 @@ class AttendanceController extends GetxController {
   Future<OfficeModel> getOffice() async {
     status.value = Status.running;
 
-    OfficeModel model =
-        await OfficeService().fetchOfficesByUserId(3.toString());
+    OfficeModel model = await OfficeService()
+        .fetchOfficesByUserId(_authenticationManager.getToken()!);
 
     status.value = Status.stopped;
 
@@ -269,8 +272,8 @@ class AttendanceController extends GetxController {
 
     // print(file);
 
-    await AttendanceService().attendanceStore(
-        File(imagePath.value), '3', '1234', '$userLat,$userLng');
+    await AttendanceService().attendanceStore(File(imagePath.value),
+        _authenticationManager.getToken()!, '$userLat,$userLng');
     status.value = Status.stopped;
 
     return "";

@@ -12,7 +12,6 @@ class PresensiService extends GetConnect {
     Uri url = Uri.parse('${Api().presensiUrl}/$nip');
 
     var res = await http.get(url);
-
     print(res.body);
 
     return PresensiModel.fromJson(json.decode(res.body));

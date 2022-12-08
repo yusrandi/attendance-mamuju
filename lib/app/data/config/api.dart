@@ -7,7 +7,7 @@ class Api {
   // static const imageURL = "$domain/public/storage/product_photos_thumb";
   // static const imageUserURL = "$domain/public/storage/user_photos_thumb";
 
-  // static const domain = "https://haha.tiketkt.com";
+  // static const domain = "https://sikeren.mamujukab.go.id";
   static const baseURL = "$domain/api";
   static const imageURL = "$domain/storage/product_photos_thumb";
   static const imageUserURL = "$domain/storage/user_photos_thumb";

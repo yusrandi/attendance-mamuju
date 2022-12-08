@@ -240,48 +240,52 @@ class AttendanceView extends GetView<AttendanceController> {
         // listSubMenu(),
         // listSubMenu(),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        detailClockIn(),
+        sliderBody(),
+      ],
+    );
+  }
+
+  Row detailClockIn() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Clock In',
-                  style: CoreStyles.uTitle
-                      .copyWith(fontSize: 18, color: Colors.black),
-                ),
-                const SizedBox(height: 8),
-                Obx(
-                  () => Text(
-                    attendanceController.clockIn.value,
-                    style: CoreStyles.uContent
-                        .copyWith(fontSize: 14, color: Colors.red),
-                  ),
-                ),
-              ],
+            Text(
+              'Clock In',
+              style:
+                  CoreStyles.uTitle.copyWith(fontSize: 18, color: Colors.black),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Clock Out',
-                  style: CoreStyles.uTitle
-                      .copyWith(fontSize: 18, color: Colors.black),
-                ),
-                const SizedBox(height: 8),
-                Obx(
-                  () => Text(
-                    attendanceController.clockOut.value,
-                    style: CoreStyles.uContent
-                        .copyWith(fontSize: 14, color: Colors.red),
-                  ),
-                ),
-              ],
+            const SizedBox(height: 8),
+            Obx(
+              () => Text(
+                attendanceController.clockIn.value,
+                style: CoreStyles.uContent
+                    .copyWith(fontSize: 14, color: Colors.red),
+              ),
             ),
           ],
         ),
-        sliderBody(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Clock Out',
+              style:
+                  CoreStyles.uTitle.copyWith(fontSize: 18, color: Colors.black),
+            ),
+            const SizedBox(height: 8),
+            Obx(
+              () => Text(
+                attendanceController.clockOut.value,
+                style: CoreStyles.uContent
+                    .copyWith(fontSize: 14, color: Colors.red),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

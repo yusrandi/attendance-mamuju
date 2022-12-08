@@ -12,11 +12,10 @@ import '../config/api.dart';
 
 class AttendanceService extends GetConnect {
   Future<String> attendanceStore(
-      File? photo, String userId, String nip, String location) async {
+      File? photo, String nip, String location) async {
     var request = http.MultipartRequest(
         "POST", Uri.parse(Api.instance.getAttendancesUrl));
 
-    request.fields['user_id'] = userId;
     request.fields['nip'] = nip;
     request.fields['location'] = location;
 
@@ -30,20 +29,30 @@ class AttendanceService extends GetConnect {
 
     final data = await request.send();
     final response = await http.Response.fromStream(data);
-    print("response ${response.statusCode}");
+    print("response ${response.body}");
 
     if (response.statusCode == 201) {
       var data = json.decode(response.body);
-      print("Data ${data['responsemsg']}");
 
-      Get.snackbar("absen bos", "Terima kasih, telah mengisi kehadiran",
-          backgroundColor: CoreColor.whiteSoft,
-          duration: const Duration(seconds: 2));
-      Get.offAllNamed(Routes.BASE);
+      if (data['responsecode'] == '1') {
+        print("Data ${data['responsemsg']}");
+
+        Get.snackbar("absen bos", "Terima kasih, telah mengisi kehadiran",
+            backgroundColor: CoreColor.whiteSoft,
+            duration: const Duration(seconds: 2));
+        Get.offAllNamed(Routes.BASE);
+      } else {
+        print("Data ${data['responsemsg']}");
+
+        Get.snackbar("SIKEREN", data['responsemsg'],
+            backgroundColor: CoreColor.whiteSoft,
+            duration: const Duration(seconds: 2));
+      }
 
       return 'berhasil';
     } else {
       throw Exception();
+      // return 'gagal';
     }
   }
 }
