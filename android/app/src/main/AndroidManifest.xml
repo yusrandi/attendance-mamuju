@@ -8,7 +8,7 @@
     <application
         android:label="SIKEREN"
         android:name="${applicationName}"
-        android:icon="@drawable/logo">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -71,7 +71,7 @@ class OtpView extends GetView<OtpController> {
                       const SizedBox(height: (16)),
                       GestureDetector(
                         onTap: () async {
-                          await _otpController.verifCode(userOtp.text);
+                          // await _otpController.verifCode(userOtp.text);
                           // Get.toNamed(Routes.OTP);
                           // if (_formKey.currentState!.validate()) {
                           //   _formKey.currentState!.save();

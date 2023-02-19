@@ -35,12 +35,11 @@ class SettingView extends GetView<SettingController> {
             ),
           ),
         ),
-        Center(
+        Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(CoreImages.logoMamujuImages, height: 100),
+              const SizedBox(height: 100),
               FutureBuilder<UserModel>(
                 future: settingController.getUser(),
                 builder: (context, snapshot) {
@@ -52,44 +51,51 @@ class SettingView extends GetView<SettingController> {
                     return Container(
                       padding: const EdgeInsets.all(8),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(user.name!,
+                          Text('Profile',
                               style: Theme.of(context).textTheme.titleLarge),
-                          Text(user.nip!,
-                              style: Theme.of(context).textTheme.titleLarge),
-                          Text(user.office!.namaInstansi!,
-                              style: Theme.of(context).textTheme.caption),
                           const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(user.phone!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(color: Colors.deepPurple)),
-                              const SizedBox(width: 16),
-                              Text(user.status!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(color: Colors.deepOrange)),
-                            ],
-                          ),
+                          userTitle(user, context),
+                          const Divider(thickness: 1.5),
+                          const SizedBox(height: 16),
+                          userDetail(
+                              'Nama Instansi',
+                              user.office!.namaInstansi!,
+                              context,
+                              Icons.work_rounded),
+                          const SizedBox(height: 16),
+                          userDetail('Nomor Hp', user.phone!, context,
+                              Icons.perm_phone_msg_sharp),
+                          const SizedBox(height: 16),
+                          userDetail('Status Bekerja', user.status!, context,
+                              Icons.supervised_user_circle),
+                          const SizedBox(height: 16),
+                          const Divider(thickness: 1.5),
+                          const SizedBox(width: 16),
                           const SizedBox(width: 16),
                           GestureDetector(
                             onTap: () => settingController.logOut(),
                             child: Container(
-                              width: size.width * 0.5,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: CoreColor.primary),
-                              child: Center(
-                                child: Text('Keluar',
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .titleSmall),
+                              width: size.width,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.logout_rounded,
+                                      color: Colors.grey),
+                                  const SizedBox(width: 16),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('KELUAR',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -104,5 +110,42 @@ class SettingView extends GetView<SettingController> {
         ),
       ],
     ));
+  }
+
+  Row userDetail(
+      String title, String value, BuildContext context, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.grey),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(value, style: Theme.of(context).textTheme.labelLarge),
+            Text(title, style: Theme.of(context).textTheme.caption),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Row userTitle(UserModel user, BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          backgroundImage: AssetImage(CoreImages.logoMamujuImages),
+          radius: 25,
+        ),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(user.name!, style: Theme.of(context).textTheme.titleLarge),
+            Text(user.nip!, style: Theme.of(context).textTheme.caption),
+          ],
+        )
+      ],
+    );
   }
 }

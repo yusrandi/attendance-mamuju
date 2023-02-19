@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 enum Status { none, running, stopped, paused }
@@ -8,7 +8,7 @@ class OtpController extends GetxController {
 
   final count = 0.obs;
 
-  FirebaseAuth auth = FirebaseAuth.instance;
+  // FirebaseAuth auth = FirebaseAuth.instance;
   String verifIdReceived = "";
 
   @override
@@ -31,13 +31,13 @@ class OtpController extends GetxController {
   }
 
   void increment() => count.value++;
-  verifCode(String smsCode) async {
-    status.value = Status.running;
+  // verifCode(String smsCode) async {
+  //   status.value = Status.running;
 
-    PhoneAuthCredential authCredential = PhoneAuthProvider.credential(
-        verificationId: verifIdReceived, smsCode: smsCode);
+  //   PhoneAuthCredential authCredential = PhoneAuthProvider.credential(
+  //       verificationId: verifIdReceived, smsCode: smsCode);
 
-    await auth.signInWithCredential(authCredential).then((value) =>
-        {status.value = Status.none, print('you are logged in successfully')});
-  }
+  //   await auth.signInWithCredential(authCredential).then((value) =>
+  //       {status.value = Status.none, print('you are logged in successfully')});
+  // }
 }

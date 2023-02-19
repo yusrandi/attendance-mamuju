@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:attendance/app/cores/core_strings.dart';
 import 'package:attendance/app/routes/app_pages.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -21,13 +20,15 @@ class AuthController extends GetxController {
   Rx<Status> status = Status.none.obs;
   RxBool passwordVisible = false.obs;
 
-  FirebaseAuth auth = FirebaseAuth.instance;
+  // FirebaseAuth auth = FirebaseAuth.instance;
   String verificationIdReeceived = "";
   String phoneNumberResult = "";
   String phoneId = "";
 
   late final AuthenticationManager _authManager =
       Get.put(AuthenticationManager());
+
+  final String TAG = "auth";
   @override
   void onInit() async {
     super.onInit();
@@ -50,39 +51,6 @@ class AuthController extends GetxController {
 
   void increment() => count.value++;
 
-  verifyPhoneNumber(String phoneNumber) {
-    status.value = Status.running;
-    count.value = 1;
-    phoneNumberResult = phoneNumber;
-
-    auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      timeout: const Duration(seconds: 5),
-      verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {},
-      // verificationCompleted: (phoneAuthCredential) async {
-      //   await auth.signInWithCredential(phoneAuthCredential).then((value) => {
-      //         print('you logged in succesfully'),
-
-      //         // Get.offAndToNamed(Routes.OTP, arguments: verificationIdReeceived)
-      //       });
-      // },
-      verificationFailed: (error) {
-        print(error.message);
-        sendSnackbar(error.message.toString());
-        status.value = Status.none;
-      },
-      codeSent: (verificationId, forceResendingToken) {
-        status.value = Status.none;
-        verificationIdReeceived = verificationId;
-
-        // Get.toNamed(Routes.OTP, arguments: verificationId);
-      },
-      codeAutoRetrievalTimeout: (verificationId) {
-        // count.value = 0;
-      },
-    );
-  }
-
   sendSnackbar(String msg) {
     Get.snackbar(
       CoreStrings.appName,
@@ -91,47 +59,30 @@ class AuthController extends GetxController {
     );
   }
 
-  verifCode(String smsCode) async {
-    status.value = Status.running;
-
-    PhoneAuthCredential authCredential = PhoneAuthProvider.credential(
-        verificationId: verificationIdReeceived, smsCode: smsCode);
-
-    try {
-      await auth.signInWithCredential(authCredential).then((value) => {
-            status.value = Status.none,
-            print('you are logged in successfully'),
-            count.value = 2,
-            loginUser(phoneNumberResult, phoneId)
-          });
-    } on PlatformException catch (e) {
-      if (e.message!.contains(
-          'The sms verification code used to create the phone auth credential is invalid')) {
-        sendSnackbar("verif code is invalid");
-      } else if (e.message!.contains('The sms code has expired')) {
-        sendSnackbar('verif code has expired');
-      }
-    }
-  }
-
-  Future<String> loginUser(String phone, String device) async {
-    print('Phone $phoneNumberResult, device $device');
+  Future<String> loginUser(String username, String password) async {
+    print('$TAG Phone $phoneNumberResult, device $phoneId');
     status.value = Status.running;
     var _response = await http.post(Uri.parse(Api().loginUrl), body: {
-      "phone": phone,
-      "device": device,
+      "username": username,
+      "password": password,
+      "device": phoneId,
     });
 
     status.value = Status.none;
+    print('$TAG res ${_response.body}');
 
     var data = json.decode(_response.body);
-    print(data['responsecode']);
+    print('$TAG data $data');
+    Get.snackbar(CoreStrings.appName, "${data['responsemsg']}",
+        backgroundColor: CoreColor.whiteSoft,
+        duration: const Duration(seconds: 2));
+
     if (data['responsecode'] == '1') {
-      UserModel user = UserModel.fromJson(json.decode(_response.body)['data']);
+      UserModel user = UserModel.fromJson(json.decode(_response.body)['user']);
 
       // login(user.id.toString());
       _authManager.login(user.nip.toString());
-      await Get.offAndToNamed(Routes.HOME);
+      await Get.offAllNamed(Routes.BASE);
     } else {
       Get.snackbar(CoreStrings.appName, "${data['responsemsg']}",
           backgroundColor: CoreColor.whiteSoft,

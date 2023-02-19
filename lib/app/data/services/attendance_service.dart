@@ -12,12 +12,13 @@ import '../config/api.dart';
 
 class AttendanceService extends GetConnect {
   Future<String> attendanceStore(
-      File? photo, String nip, String location) async {
+      File? photo, String nip, String location, String absenId) async {
     var request = http.MultipartRequest(
         "POST", Uri.parse(Api.instance.getAttendancesUrl));
 
     request.fields['nip'] = nip;
     request.fields['location'] = location;
+    request.fields['absen_id'] = absenId;
 
     if (photo != null) {
       final resFile = await http.MultipartFile.fromPath('photo', photo.path,

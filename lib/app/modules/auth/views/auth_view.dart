@@ -1,7 +1,6 @@
 import 'package:attendance/app/cores/core_colors.dart';
 import 'package:attendance/app/cores/core_images.dart';
 import 'package:attendance/app/routes/app_pages.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -62,103 +61,101 @@ class AuthView extends GetView<AuthController> {
                   children: [
                     Text(
                       CoreStrings.appName,
-                      style: CoreStyles.uTitle.copyWith(color: Colors.black),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(color: CoreColor.primary),
                     ),
                     Text(CoreStrings.welcomeTitle,
-                        style:
-                            CoreStyles.uSubTitle.copyWith(color: Colors.black)),
+                        style: Theme.of(context).textTheme.titleSmall),
                   ],
                 )),
             Expanded(
                 flex: 3,
                 child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Obx(() => authController.count.value == 0
-                      ? authViewPage()
-                      : authController.count.value == 1
-                          ? otpView()
-                          : landingView()),
-                )),
+                    physics: const BouncingScrollPhysics(),
+                    child: authViewPage(context, size))),
           ],
         ),
       ),
     );
   }
 
-  Column authViewPage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-            width: double.infinity,
-            child: Lottie.asset(CoreImages.attendanceLottie, height: 200)),
-        const SizedBox(height: (16)),
-
-        Text(
-          "Welcome Back",
-          style: CoreStyles.uTitle,
-        ),
-
-        const SizedBox(height: (16)),
-        emailField(_userEmail, TextInputType.phone, 'Phone', Icons.phone),
-        const SizedBox(height: (8)),
-        const Text(
-          "we will send you otp code on your valid phone number",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey),
-        ),
-        // passwordField(),
-        const SizedBox(height: (26)),
-        GestureDetector(
-          onTap: () async {
-            // Get.toNamed(Routes.OTP);
-            authController.verifyPhoneNumber(_userEmail.text);
-            // if (_formKey.currentState!.validate()) {
-            //   _formKey.currentState!.save();
-
-            //   var email = _userEmail.text.trim();
-            //   var password = _userPass.text.trim();
-
-            //   print(email);
-            //   // await authController.loginUser(email, password);
-            //   KeyboardUtil.hideKeyboard(context);
-            // }
-          },
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-                color: CoreColor.primary,
-                borderRadius: BorderRadius.circular(20)),
-            child: Center(
-                child: Obx(
-              () => authController.status.value == Status.running
-                  ? loading()
-                  : Text(
-                      "Send me OTP",
-                      style: CoreStyles.uSubTitle.copyWith(color: Colors.white),
-                    ),
-            )),
+  authViewPage(BuildContext context, Size size) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+              width: double.infinity,
+              child: Lottie.asset(CoreImages.attendanceLottie,
+                  height: size.width * 0.3)),
+          const SizedBox(height: (16)),
+          Text(
+            "Welcome Back",
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-        ),
-        const SizedBox(height: 16),
-        // RichText(
 
-        //   text: TextSpan(
-        //       text: 'belum punya akun ?',
-        //       style: CoreStyles.uContent,
-        //       children: <TextSpan>[
-        //         TextSpan(
-        //             text: ' Daftar sekarang',
-        //             style: CoreStyles.uSubTitle,
-        //             recognizer: TapGestureRecognizer()
-        //               ..onTap = () {
-        //                 // navigate to desired screen
-        //                 authController.count.value = 1;
-        //               })
-        //       ]),
-        // ),
-      ],
+          const SizedBox(height: (16)),
+          emailField(_userEmail, TextInputType.text, 'Username',
+              Icons.perm_identity_rounded),
+          const SizedBox(height: (8)),
+
+          passwordField(),
+          const SizedBox(height: (26)),
+          GestureDetector(
+            onTap: () async {
+              // Get.toNamed(Routes.OTP);
+              // authController.verifyPhoneNumber(_userEmail.text);
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+
+                var email = _userEmail.text.trim();
+                var password = _userPass.text.trim();
+
+                print(email);
+                await authController.loginUser(email, password);
+                KeyboardUtil.hideKeyboard(context);
+              }
+            },
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                  color: CoreColor.primary,
+                  borderRadius: BorderRadius.circular(20)),
+              child: Center(
+                  child: Obx(
+                () => authController.status.value == Status.running
+                    ? loading()
+                    : Text(
+                        "login",
+                        style:
+                            CoreStyles.uSubTitle.copyWith(color: Colors.white),
+                      ),
+              )),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // RichText(
+
+          //   text: TextSpan(
+          //       text: 'belum punya akun ?',
+          //       style: CoreStyles.uContent,
+          //       children: <TextSpan>[
+          //         TextSpan(
+          //             text: ' Daftar sekarang',
+          //             style: CoreStyles.uSubTitle,
+          //             recognizer: TapGestureRecognizer()
+          //               ..onTap = () {
+          //                 // navigate to desired screen
+          //                 authController.count.value = 1;
+          //               })
+          //       ]),
+          // ),
+        ],
+      ),
     );
   }
 
@@ -169,6 +166,7 @@ class AuthView extends GetView<AuthController> {
   TextFormField emailField(TextEditingController controller,
       TextInputType inputType, String title, IconData icon) {
     return TextFormField(
+      validator: validateEmail,
       controller: controller,
       cursorColor: CoreColor.primary,
       keyboardType: inputType,
@@ -176,7 +174,7 @@ class AuthView extends GetView<AuthController> {
         labelText: title,
         labelStyle: const TextStyle(color: Colors.black),
 
-        hintText: '+62',
+        hintText: 'Your $title',
         // Here is key idea
 
         prefixIcon: Icon(icon, color: CoreColor.primary),
@@ -278,7 +276,7 @@ class AuthView extends GetView<AuthController> {
         const SizedBox(height: (16)),
         GestureDetector(
           onTap: () async {
-            await authController.verifCode(_userOtp.text);
+            // await authController.verifCode(_userOtp.text);
             // Get.toNamed(Routes.OTP);
             // if (_formKey.currentState!.validate()) {
             //   _formKey.currentState!.save();

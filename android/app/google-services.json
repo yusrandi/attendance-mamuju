@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "397492701622-fmia1i06dh0o682clf82f4r1fh5sgotn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.use.attendance",
+            "certificate_hash": "0b2df6b2a1445b64cbcafbe2f7cc79b74f80e56d"
+          }
+        },
+        {
           "client_id": "397492701622-0bt3eqg8d8rr86gf7nhkn2a10vllb814.apps.googleusercontent.com",
           "client_type": 3
         }

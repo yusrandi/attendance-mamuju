@@ -1,7 +1,11 @@
+import 'package:attendance/app/cores/core_constants.dart';
+import 'package:attendance/app/data/models/user_model.dart';
+import 'package:attendance/app/data/services/user_services.dart';
 import 'package:get/get.dart';
 
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 
 import '../../../data/models/offices_model.dart';
 import '../../../data/services/office_services.dart';
@@ -14,6 +18,10 @@ class HomeController extends GetxController {
   RxString address = "...".obs;
   RxDouble latPos = 0.0.obs;
   RxDouble lngPos = 0.0.obs;
+
+  RxString clockIn = '...'.obs;
+  RxString clockOut = '...'.obs;
+  RxString office = '...'.obs;
 
   final AuthenticationManager _authManager = Get.put(AuthenticationManager());
 
@@ -41,6 +49,24 @@ class HomeController extends GetxController {
     print('[$TAG], $loc');
 
     address.value = loc;
+
+    UserModel model = await getUserByNip();
+
+    office.value = model.office!.namaInstansi!;
+
+    var day = DateFormat("EEEE", "id_ID")
+        .format(DateTime.now().add(Duration(days: 0)));
+    print(day);
+    print(days[day]);
+
+    List<Absen> absens = model.absenCategory!.absens!
+        .where((element) => int.parse(element.days!) == days[day])
+        .toList();
+
+    if (absens.isNotEmpty) {
+      clockIn.value = absens.first.begin!;
+      clockOut.value = absens.last.end!;
+    }
   }
 
   @override
@@ -58,10 +84,15 @@ class HomeController extends GetxController {
   }
 
   Future<OfficeModel> getOffice() async {
+    print("User Token ${_authManager.getToken()!}");
     OfficeModel model =
         await OfficeService().fetchOfficesByUserId(_authManager.getToken()!);
 
     return model;
+  }
+
+  Future<UserModel> getUserByNip() async {
+    return UserService().fetchUserByUserNip(_authManager.getToken()!);
   }
 
   Future<Position> getGeoLocationPosition() async {

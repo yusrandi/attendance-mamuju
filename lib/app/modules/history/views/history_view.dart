@@ -13,6 +13,7 @@ class HistoryView extends GetView<HistoryController> {
   HistoryView({Key? key}) : super(key: key);
 
   final HistoryController historyController = Get.find();
+  DateTime now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class HistoryView extends GetView<HistoryController> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               child: Image.asset(
                 CoreImages.backBotImages,
@@ -52,12 +53,13 @@ class HistoryView extends GetView<HistoryController> {
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
                       Presensi presensi = historyController.listPresensi[index];
+
                       return Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16),
                         height: 100,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(32),
-                            color: index == 0
+                            color: index == now.day
                                 ? CoreColor.primarySoft
                                 : Colors.black12),
                         child: Row(
@@ -68,7 +70,7 @@ class HistoryView extends GetView<HistoryController> {
                                   horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(32),
-                                  color: index == 0
+                                  color: index == now.day
                                       ? CoreColor.primary
                                       : Colors.white),
                               child: Column(
@@ -78,7 +80,7 @@ class HistoryView extends GetView<HistoryController> {
                                     presensi.tanggal!,
                                     style: CoreStyles.uTitle.copyWith(
                                         fontSize: 20,
-                                        color: index != 0
+                                        color: index != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -86,7 +88,7 @@ class HistoryView extends GetView<HistoryController> {
                                     presensi.hari!,
                                     style: CoreStyles.uTitle.copyWith(
                                         fontSize: 20,
-                                        color: index != 0
+                                        color: index != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -100,7 +102,7 @@ class HistoryView extends GetView<HistoryController> {
                                   Text(
                                     "Clock In ",
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != 0
+                                        color: index != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -109,7 +111,7 @@ class HistoryView extends GetView<HistoryController> {
                                         ? presensi.leaves!
                                         : presensi.masuk!,
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != 0
+                                        color: index != now.day
                                             ? CoreColor.kTextColor
                                             : Colors.white),
                                   ),
@@ -123,7 +125,7 @@ class HistoryView extends GetView<HistoryController> {
                                   Text(
                                     "Clock Out ",
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != 0
+                                        color: index != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -132,7 +134,7 @@ class HistoryView extends GetView<HistoryController> {
                                         ? presensi.leaves!
                                         : presensi.pulang!,
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != 0
+                                        color: index != now.day
                                             ? CoreColor.kTextColor
                                             : Colors.white),
                                   ),
@@ -159,16 +161,22 @@ class HistoryView extends GetView<HistoryController> {
     return Obx(
       () => Row(
         children: [
-          GestureDetector(
-            onTap: () {
-              if (historyController.count.value - 1 >= 0) {
-                historyController.decrement();
-              }
-            },
-            child: Container(
-                height: 45,
-                width: 45,
-                child: Center(child: Icon(Icons.arrow_back_ios_new_rounded))),
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: false,
+            child: GestureDetector(
+              onTap: () {
+                if (historyController.count.value - 1 >= 0) {
+                  historyController.decrement();
+                }
+              },
+              child: Container(
+                  height: 45,
+                  width: 45,
+                  child: Center(child: Icon(Icons.arrow_back_ios_new_rounded))),
+            ),
           ),
           Expanded(
               flex: 1,
@@ -213,13 +221,11 @@ class HistoryView extends GetView<HistoryController> {
                       .copyWith(color: CoreColor.kHintTextColor, fontSize: 20),
                 )),
               )),
-          GestureDetector(
-            onTap: () {
-              if (historyController.count.value + 1 <
-                  historyController.listMonth.length) {
-                historyController.increment();
-              }
-            },
+          Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: false,
             child: GestureDetector(
               onTap: () {
                 if (historyController.count.value + 1 <

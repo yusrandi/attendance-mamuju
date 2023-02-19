@@ -1,6 +1,8 @@
 import 'package:attendance/app/cores/core_colors.dart';
+import 'package:attendance/app/cores/core_constants.dart';
 import 'package:attendance/app/cores/core_images.dart';
 import 'package:attendance/app/data/models/offices_model.dart';
+import 'package:attendance/app/data/models/user_model.dart';
 import 'package:attendance/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -49,7 +51,7 @@ class HomeView extends GetView<HomeController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "${DateTime.now().hour}:${DateTime.now().minute}",
+                        DateFormat("HH:mm", "id_ID").format(DateTime.now()),
                         style: CoreStyles.uTitle.copyWith(
                             color: CoreColor.kTextColor, fontSize: 46),
                       ),
@@ -104,69 +106,63 @@ class HomeView extends GetView<HomeController> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.location_history),
+                          const Icon(Icons.home_work_outlined,
+                              color: Colors.grey),
                           const SizedBox(width: 16),
                           Obx(() => Text(
-                                homeController.address.value,
+                                homeController.office.value,
                                 maxLines: 1,
-                                style: Theme.of(context).textTheme.caption,
+                                style: Theme.of(context).textTheme.labelLarge,
                               )),
                         ],
                       ),
                     ],
                   ),
                 ),
-                FutureBuilder<OfficeModel>(
-                  future: homeController.getOffice(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      OfficeModel model = snapshot.data!;
-
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              Icon(
-                                Icons.access_alarms_rounded,
-                                color: CoreColor.primary,
-                              ),
-                              Text(
-                                model.absens!.first.begin!,
-                                style: CoreStyles.uSubTitle.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                              Text(
-                                "clock in",
-                                style: CoreStyles.uContent,
-                              )
-                            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.access_alarms_rounded,
+                          color: CoreColor.primary,
+                        ),
+                        Obx(
+                          () => Text(
+                            homeController.clockIn.value,
+                            style: CoreStyles.uSubTitle.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w900),
                           ),
-                          Column(
-                            children: [
-                              Icon(
-                                Icons.access_alarms_rounded,
-                                color: CoreColor.primary,
-                              ),
-                              Text(
-                                model.absens!.last.begin!,
-                                style: CoreStyles.uSubTitle.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                              Text(
-                                "clock out",
-                                style: CoreStyles.uContent,
-                              )
-                            ],
+                        ),
+                        Text(
+                          "Jam Masuk",
+                          style: CoreStyles.uContent,
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.access_alarms_rounded,
+                          color: CoreColor.primary,
+                        ),
+                        Obx(
+                          () => Text(
+                            homeController.clockOut.value,
+                            style: CoreStyles.uSubTitle.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w900),
                           ),
-                        ],
-                      );
-                    }
-                  },
+                        ),
+                        Text(
+                          "Jam Pulang",
+                          style: CoreStyles.uContent,
+                        )
+                      ],
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 120)
               ],

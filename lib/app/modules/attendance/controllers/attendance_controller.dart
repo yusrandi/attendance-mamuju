@@ -1,33 +1,38 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 
 import 'dart:ui' as ui;
 
+import 'package:attendance/app/cores/core_constants.dart';
 import 'package:attendance/app/data/models/offices_model.dart';
+import 'package:attendance/app/data/models/user_model.dart';
 import 'package:attendance/app/data/services/attendance_service.dart';
 import 'package:attendance/app/data/services/office_services.dart';
+import 'package:attendance/app/data/services/user_services.dart';
 import 'package:attendance/app/modules/auth/controllers/authentication_manager.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 enum Status { none, running, stopped, paused }
 
 class AttendanceController extends GetxController {
-  final String TAG = "AttendanceController";
-
   Rx<Status> status = Status.running.obs;
   final AuthenticationManager _authenticationManager =
       Get.put(AuthenticationManager());
 
   final count = 0.obs;
-  RxString latPos = "".obs;
+  RxDouble latPos = 0.0.obs;
   RxDouble lngPos = 0.0.obs;
   RxDouble zoomPos = 17.0.obs;
   RxString address = "...".obs;
@@ -50,9 +55,22 @@ class AttendanceController extends GetxController {
   double userLat = 0.0;
   double userLng = 0.0;
 
+  RxString absenLabel = "Pilih Absen".obs;
+  RxString absenId = "0".obs;
+
+  RxList<Absen> listAbsen = <Absen>[].obs;
+
+  RxDouble officeRadius = 0.0.obs;
+  RxInt distanceToOffice = 10000.obs;
+  RxString statusUser = "wfo".obs;
+
+  final String TAG = "attendance";
+
   @override
   void onInit() async {
     super.onInit();
+
+    status.value = Status.running;
 
     double userLatitude = Get.arguments[0];
     double userLongitude = Get.arguments[1];
@@ -60,21 +78,45 @@ class AttendanceController extends GetxController {
     userLat = userLatitude;
     userLng = userLongitude;
 
-    print("lat $userLatitude, long $userLongitude");
+    print("$TAG user location  lat $userLatitude, long $userLongitude");
 
     OfficeModel model = await getOffice();
+    UserModel userModel = await getUserModel();
 
-    clockIn.value = model.absens!.first.begin!;
-    clockOut.value = model.absens!.last.begin!;
+    listAbsen.value = userModel.absenCategory!.absens!;
+    var day = DateFormat("EEEE", "id_ID")
+        .format(DateTime.now().add(Duration(days: 0)));
+    print(day);
+    print(days[day]);
+
+    List<Absen> absens = userModel.absenCategory!.absens!
+        .where((element) => int.parse(element.days!) == days[day])
+        .toList();
+
+    if (absens.isNotEmpty) {
+      clockIn.value = absens.first.begin!;
+      clockOut.value = absens.last.begin!;
+    } else {
+      clockIn.value = '-';
+      clockOut.value = '-';
+    }
+
+    officeRadius.value = double.parse(model.radius!);
 
     var officeSplit = model.location!.split(',');
-    latPos.value = officeSplit[0];
+
+    print('$TAG office Split $officeSplit');
+
+    latPos.value = double.parse(officeSplit[0]);
     lngPos.value = double.parse(officeSplit[1]);
     addCircleFM(double.parse(officeSplit[0]), double.parse(officeSplit[1]));
     addMarkerFM(double.parse(officeSplit[0]), double.parse(officeSplit[1]), 0,
         Colors.deepOrange);
 
     addMarkerFM(userLatitude, userLongitude, 1, Colors.deepPurple);
+
+    UserModel user = await getUser();
+    statusUser.value = user.status!;
 
     // addCircleFM();
     // addMarkerFM(double.parse(latPos.value), lngPos.value, 0, Colors.deepOrange);
@@ -86,12 +128,25 @@ class AttendanceController extends GetxController {
         await placemarkFromCoordinates(userLatitude, userLongitude);
     print(placemarks);
     Placemark place = placemarks[0];
+
     print('[$TAG], $place');
+
+    double distanceD = calculateDistance(
+        double.parse(officeSplit[0]), double.parse(officeSplit[1]));
+
+    distanceToOffice.value = (distanceD * 1000).round();
+
+    if (kDebugMode) {
+      print(
+          "[$TAG], ${(distanceD * 1000).round()} M, kantor radius ${model.radius}");
+    }
 
     var loc =
         '${place.name}, ${place.subLocality}, ${place.locality}, ${place.subAdministrativeArea}, ${place.administrativeArea}, ${place.country}';
     print('[$TAG], $loc');
     address.value = loc;
+
+    status.value = Status.none;
 
     await initCamera();
   }
@@ -120,22 +175,14 @@ class AttendanceController extends GetxController {
   }
 
   void increment() => count.value++;
-
-  // addCircle() {
-  //   final CircleId circleId = CircleId("circleIdVal");
-
-  //   final Circle circle = Circle(
-  //     circleId: circleId,
-  //     consumeTapEvents: true,
-  //     strokeColor: CoreColor.primary,
-  //     fillColor: Colors.transparent,
-  //     strokeWidth: 3,
-  //     center: LatLng(latPos, lngPos.value),
-  //     radius: 50,
-  //   );
-
-  //   circles[circleId] = circle;
-  // }
+  double calculateDistance(lat1, lon1) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((userLat - lat1) * p) / 2 +
+        c(lat1 * p) * c(userLat * p) * (1 - c((userLng - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
 
   addCircleFM(double lat, double lng) {
     const circleId = "circleIdValFM";
@@ -145,33 +192,12 @@ class AttendanceController extends GetxController {
         borderColor: Colors.deepOrange,
         borderStrokeWidth: 2,
         useRadiusInMeter: true,
-        radius: 100 // 2000 meters | 2 km
+        radius: officeRadius.value // 2000 meters | 2 km
         );
 
     // circles[0] = circle;
     circles.insert(0, circle);
   }
-
-  // addMarker(double latitude, double longitude, String id, String path) async {
-  //   final Uint8List customMarker = await getBytesFromAsset(
-  //       path: path, //paste the custom image path
-  //       width: 150 // size of custom image as marker
-  //       );
-
-  //   MarkerId markerId = MarkerId("markerIdVal$id");
-
-  //   final Marker marker = Marker(
-  //     markerId: markerId,
-  //     position: LatLng(
-  //       latitude,
-  //       longitude,
-  //     ),
-  //     icon: BitmapDescriptor.fromBytes(customMarker),
-  //     infoWindow: InfoWindow(title: "Office", snippet: 'Jl. Our Office'),
-  //   );
-
-  //   markers[markerId] = marker;
-  // }
 
   addMarkerFM(double latitude, double longitude, int index, Color color) async {
     final marker = Marker(
@@ -198,6 +224,9 @@ class AttendanceController extends GetxController {
   }
 
   Future<Position> getGeoLocationPosition() async {
+    status.value = Status.running;
+    address.value = '...';
+
     print('[$TAG] getGeoLocationPosition');
     count.value = 0;
 
@@ -252,6 +281,16 @@ class AttendanceController extends GetxController {
     print('[$TAG], $loc');
     address.value = loc;
 
+    status.value = Status.none;
+
+    double distanceD = calculateDistance(latPos.value, lngPos.value);
+
+    distanceToOffice.value = (distanceD * 1000).round();
+
+    if (kDebugMode) {
+      print("[$TAG], ${(distanceD * 1000).round()} M");
+    }
+
     return pos;
   }
 
@@ -273,9 +312,18 @@ class AttendanceController extends GetxController {
     // print(file);
 
     await AttendanceService().attendanceStore(File(imagePath.value),
-        _authenticationManager.getToken()!, '$userLat,$userLng');
+        _authenticationManager.getToken()!, '$userLat,$userLng', absenId.value);
     status.value = Status.stopped;
 
     return "";
+  }
+
+  Future<UserModel> getUser() async {
+    return UserService().fetchUserByUserNip(_authenticationManager.getToken()!);
+  }
+
+  Future<UserModel> getUserModel() async {
+    return await UserService()
+        .fetchUserByUserNip(_authenticationManager.getToken()!);
   }
 }

@@ -13,6 +13,7 @@ import 'package:geocoding/geocoding.dart';
 
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
@@ -66,8 +67,8 @@ class AttendanceView extends GetView<AttendanceController> {
           left: 0,
           right: 0,
           child: Obx(
-            () => attendanceController.status == Status.running
-                ? Center(
+            () => attendanceController.status.value == Status.running
+                ? const Center(
                     child: SizedBox(
                       height: 100,
                       width: 100,
@@ -105,26 +106,28 @@ class AttendanceView extends GetView<AttendanceController> {
   }
 
   bodyLeafLeft() {
-    return FlutterMap(
-      options: MapOptions(
-        center: LatLng(double.parse(attendanceController.latPos.value),
-            attendanceController.lngPos.value),
-        zoom: attendanceController.zoomPos.value,
+    return Obx(
+      () => FlutterMap(
+        options: MapOptions(
+          center: LatLng(
+              attendanceController.userLat, attendanceController.userLng),
+          zoom: attendanceController.zoomPos.value,
+        ),
+        nonRotatedChildren: [
+          AttributionWidget.defaultWidget(
+            source: 'OpenStreetMap contributors',
+            onSourceTapped: () {},
+          ),
+        ],
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+          ),
+          MarkerLayer(markers: attendanceController.markers),
+          CircleLayer(circles: attendanceController.circles),
+        ],
       ),
-      nonRotatedChildren: [
-        AttributionWidget.defaultWidget(
-          source: 'OpenStreetMap contributors',
-          onSourceTapped: () {},
-        ),
-      ],
-      children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-        ),
-        MarkerLayer(markers: attendanceController.markers),
-        CircleLayer(circles: attendanceController.circles),
-      ],
     );
   }
 
@@ -162,11 +165,11 @@ class AttendanceView extends GetView<AttendanceController> {
 
   detailBody(Size size, BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Location',
-          style: CoreStyles.uTitle.copyWith(fontSize: 18, color: Colors.black),
+          'Alamat Lengkap',
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(height: 8),
         Obx(
@@ -175,6 +178,30 @@ class AttendanceView extends GetView<AttendanceController> {
             style: CoreStyles.uContent
                 .copyWith(fontSize: 14, color: CoreColor.kHintTextColor),
           ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Jarak dari instansi',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 8),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.run_circle_outlined),
+            const SizedBox(width: 8),
+            const Icon(Icons.arrow_circle_left_outlined),
+            const SizedBox(width: 16),
+            Obx(() => attendanceController.status.value == Status.running
+                ? Center(child: CircularProgressIndicator())
+                : Text("${attendanceController.distanceToOffice.value} M",
+                    style: CoreStyles.uSubTitle)),
+            const SizedBox(width: 16),
+            const Icon(Icons.arrow_circle_right_outlined),
+            const SizedBox(width: 8),
+            const Icon(Icons.home_work_outlined),
+          ],
         ),
         const SizedBox(height: 16),
 
@@ -187,6 +214,8 @@ class AttendanceView extends GetView<AttendanceController> {
               ));
             },
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Obx(
                   () => attendanceController.imagePath.value != ""
@@ -210,7 +239,6 @@ class AttendanceView extends GetView<AttendanceController> {
                 ),
               ],
             )),
-        const Divider(),
 
         const SizedBox(height: 16),
         // GestureDetector(
@@ -236,12 +264,45 @@ class AttendanceView extends GetView<AttendanceController> {
         //     },
         //     child: keteranganField()),
         const SizedBox(height: 16),
+        GestureDetector(
+          onTap: () {
+            showCupertinoModalBottomSheet(
+              expand: false,
+              context: context,
+              backgroundColor: Colors.transparent,
+              builder: (context) => testBottomSheetCountries(context),
+            );
+          },
+          child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(width: 1, color: CoreColor.primary)),
+            child: Center(
+              child: Obx(() => Text(attendanceController.absenLabel.value)),
+            ),
+          ),
+        ),
 
         // listSubMenu(),
         // listSubMenu(),
 
-        detailClockIn(),
-        sliderBody(),
+        // detailClockIn(),
+        const SizedBox(height: 16),
+        const SizedBox(height: 16),
+
+        const Divider(),
+
+        // sliderBody(),
+        Obx(() => attendanceController.distanceToOffice.value <=
+                    attendanceController.officeRadius.value ||
+                attendanceController.statusUser.value == 'wfh'
+            ? sliderBody()
+            : Text(
+                'anda berada di luar dari jarak yang telah di tentukan',
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              )),
       ],
     );
   }
@@ -287,35 +348,6 @@ class AttendanceView extends GetView<AttendanceController> {
           ],
         ),
       ],
-    );
-  }
-
-  Container listKeterangan() {
-    var list = ["Jam Pagi", "Jam Siang", "Jam Sore"];
-    return Container(
-      child: ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(),
-              padding: EdgeInsets.only(left: 16, right: 16, top: 16),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context, false);
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      list[index],
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Divider(),
-                  ],
-                ),
-              ),
-            );
-          }),
     );
   }
 
@@ -420,6 +452,37 @@ class AttendanceView extends GetView<AttendanceController> {
     );
   }
 
+  sliderAbsen() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Builder(
+        builder: (context) {
+          final GlobalKey<SlideActionState> _key = GlobalKey();
+          return SlideAction(
+            key: _key,
+            onSubmit: () {
+              // Get.offAndToNamed(Routes.AUTH);
+              // Future.delayed(Duration(seconds: 1),
+              //     () => Get.offAndToNamed(Routes.AUTH));
+            },
+            alignment: Alignment.centerRight,
+            sliderButtonIcon:
+                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.red),
+            innerColor: Colors.white,
+            outerColor: Colors.red,
+            borderRadius: 16,
+            child: const Text(
+              ' Geser Kekanan untuk hadir',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   sliderBody() {
     return Obx(
       () => attendanceController.status == Status.running
@@ -443,17 +506,17 @@ class AttendanceView extends GetView<AttendanceController> {
                       );
                     },
                     alignment: Alignment.centerRight,
+                    sliderButtonIcon: Icon(Icons.arrow_forward_ios_rounded,
+                        color: CoreColor.primary),
+                    innerColor: Colors.white,
+                    outerColor: CoreColor.primary,
+                    borderRadius: 16,
                     child: const Text(
                       ' Swipe Right to CLOCK IN',
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    sliderButtonIcon: Icon(Icons.arrow_forward_ios_rounded,
-                        color: CoreColor.primary),
-                    innerColor: Colors.white,
-                    outerColor: CoreColor.primary,
-                    borderRadius: 16,
                   );
                 },
               ),
@@ -461,48 +524,27 @@ class AttendanceView extends GetView<AttendanceController> {
     );
   }
 
-  Container listSubMenu() {
-    List<String> listMenu = [
-      'Absen Pagi',
-      'Absen Siang',
-      'Absen Sore',
-      'Sift Siang',
-      'Sift Malam',
-    ];
-    return Container(
-      height: 40,
-      margin: const EdgeInsets.only(top: 16),
-      child: ListView.builder(
+  testBottomSheetCountries(BuildContext context) {
+    return Material(
+        child: SafeArea(
+      top: false,
+      child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Obx(
-            () => GestureDetector(
-              onTap: () => attendanceController.count.value = index,
-              child: Container(
-                margin: const EdgeInsets.only(right: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(),
-                    color: attendanceController.count.value == index
-                        ? CoreColor.primary
-                        : Colors.white),
-                child: Center(
-                  child: Text(
-                    listMenu[index],
-                    style: CoreStyles.uContent.copyWith(
-                        color: attendanceController.count.value == index
-                            ? Colors.white
-                            : CoreColor.kTextColor),
-                  ),
-                ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            for (var item in attendanceController.listAbsen)
+              ListTile(
+                title: Text(item.desc!),
+                onTap: () {
+                  attendanceController.absenId.value = item.id!.toString();
+                  attendanceController.absenLabel.value = item.desc!;
+                  Navigator.of(context).pop();
+                },
               ),
-            ),
-          );
-        },
-        itemCount: listMenu.length,
+          ],
+        ),
       ),
-    );
+    ));
   }
 }

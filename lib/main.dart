@@ -1,5 +1,4 @@
 import 'package:attendance/app/modules/auth/controllers/authentication_manager.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -11,7 +10,7 @@ final AuthenticationManager _authManager = Get.put(AuthenticationManager());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
   await initializeDateFormatting('id_ID', null);
   await GetStorage.init();
 
