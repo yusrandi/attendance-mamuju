@@ -135,7 +135,7 @@ class Absen {
         id: json["id"],
         begin: json["begin"],
         end: json["end"],
-        total: json["total"],
+        total: json["total"].toString(),
         clockIn: json["clock_in"],
         clockOut: json["clock_out"],
         desc: json["desc"],

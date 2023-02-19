@@ -30,6 +30,7 @@ class AttendanceService extends GetConnect {
 
     final data = await request.send();
     final response = await http.Response.fromStream(data);
+
     print("response ${response.body}");
 
     if (response.statusCode == 201) {
