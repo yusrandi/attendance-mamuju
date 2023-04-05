@@ -114,6 +114,17 @@ class HomeView extends GetView<HomeController> {
                                 maxLines: 1,
                                 style: Theme.of(context).textTheme.labelLarge,
                               )),
+                          Obx(
+                            () => Text(
+                              homeController.isMock.value
+                                  ? "Mohon matikan lokasi palsu anda!"
+                                  : "",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption!
+                                  .copyWith(color: Colors.red),
+                            ),
+                          )
                         ],
                       ),
                     ],

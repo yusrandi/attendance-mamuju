@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:get/get.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../cores/core_colors.dart';
 import '../../../cores/core_images.dart';
@@ -17,6 +18,7 @@ class HistoryView extends GetView<HistoryController> {
 
   @override
   Widget build(BuildContext context) {
+    print("days ${now}");
     var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
@@ -59,7 +61,7 @@ class HistoryView extends GetView<HistoryController> {
                         height: 100,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(32),
-                            color: index == now.day
+                            color: index + 1 == now.day
                                 ? CoreColor.primarySoft
                                 : Colors.black12),
                         child: Row(
@@ -70,7 +72,7 @@ class HistoryView extends GetView<HistoryController> {
                                   horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(32),
-                                  color: index == now.day
+                                  color: index + 1 == now.day
                                       ? CoreColor.primary
                                       : Colors.white),
                               child: Column(
@@ -80,7 +82,7 @@ class HistoryView extends GetView<HistoryController> {
                                     presensi.tanggal!,
                                     style: CoreStyles.uTitle.copyWith(
                                         fontSize: 20,
-                                        color: index != now.day
+                                        color: index + 1 != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -88,7 +90,7 @@ class HistoryView extends GetView<HistoryController> {
                                     presensi.hari!,
                                     style: CoreStyles.uTitle.copyWith(
                                         fontSize: 20,
-                                        color: index != now.day
+                                        color: index + 1 != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -102,7 +104,7 @@ class HistoryView extends GetView<HistoryController> {
                                   Text(
                                     "Clock In ",
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != now.day
+                                        color: index + 1 != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -111,7 +113,7 @@ class HistoryView extends GetView<HistoryController> {
                                         ? presensi.leaves!
                                         : presensi.masuk!,
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != now.day
+                                        color: index + 1 != now.day
                                             ? CoreColor.kTextColor
                                             : Colors.white),
                                   ),
@@ -125,7 +127,7 @@ class HistoryView extends GetView<HistoryController> {
                                   Text(
                                     "Clock Out ",
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != now.day
+                                        color: index + 1 != now.day
                                             ? Colors.black
                                             : Colors.white),
                                   ),
@@ -134,7 +136,7 @@ class HistoryView extends GetView<HistoryController> {
                                         ? presensi.leaves!
                                         : presensi.pulang!,
                                     style: CoreStyles.uSubTitle.copyWith(
-                                        color: index != now.day
+                                        color: index + 1 != now.day
                                             ? CoreColor.kTextColor
                                             : Colors.white),
                                   ),

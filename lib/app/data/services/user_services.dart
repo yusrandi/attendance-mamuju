@@ -14,7 +14,7 @@ class UserService extends GetConnect {
 
     var res = await http.get(url);
 
-    print(res.body);
+    // print(res.body);
 
     return UserModel.fromJson(json.decode(res.body)['user']);
   }

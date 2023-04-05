@@ -63,6 +63,7 @@ class AttendanceController extends GetxController {
   RxDouble officeRadius = 0.0.obs;
   RxInt distanceToOffice = 10000.obs;
   RxString statusUser = "wfo".obs;
+  RxBool isMocked = true.obs;
 
   final String TAG = "attendance";
 
@@ -71,6 +72,12 @@ class AttendanceController extends GetxController {
     super.onInit();
 
     status.value = Status.running;
+
+    Position pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    print('[$TAG] isMocked ${pos.isMocked}');
+    isMocked.value = pos.isMocked;
 
     double userLatitude = Get.arguments[0];
     double userLongitude = Get.arguments[1];
@@ -83,15 +90,17 @@ class AttendanceController extends GetxController {
     OfficeModel model = await getOffice();
     UserModel userModel = await getUserModel();
 
-    listAbsen.value = userModel.absenCategory!.absens!;
+    // listAbsen.value = userModel.absenCategory!.absens!;
     var day = DateFormat("EEEE", "id_ID")
-        .format(DateTime.now().add(Duration(days: 0)));
+        .format(DateTime.now().subtract(Duration(days: 0)));
     print(day);
     print(days[day]);
 
     List<Absen> absens = userModel.absenCategory!.absens!
         .where((element) => int.parse(element.days!) == days[day])
         .toList();
+
+    listAbsen.value = absens;
 
     if (absens.isNotEmpty) {
       clockIn.value = absens.first.begin!;
@@ -261,6 +270,10 @@ class AttendanceController extends GetxController {
     // continue accessing the position of the device.
     Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+
+    print('[$TAG] isMocked ${pos.isMocked}');
+
+    isMocked.value = pos.isMocked;
 
     print('[$TAG] position $pos');
 

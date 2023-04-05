@@ -22,6 +22,7 @@ class HomeController extends GetxController {
   RxString clockIn = '...'.obs;
   RxString clockOut = '...'.obs;
   RxString office = '...'.obs;
+  RxBool isMock = false.obs;
 
   final AuthenticationManager _authManager = Get.put(AuthenticationManager());
 
@@ -31,6 +32,11 @@ class HomeController extends GetxController {
 
     print('User Phone ${_authManager.getToken()}');
     Position position = await getGeoLocationPosition();
+
+    bool isMocked = position.isMocked;
+    print("$TAG isMocked $isMocked");
+    isMock.value = isMocked;
+
     count.value = 1;
     print(
         "[$TAG], Location Lat: ${position.latitude} , Long: ${position.longitude} ");
@@ -63,7 +69,7 @@ class HomeController extends GetxController {
         .where((element) => int.parse(element.days!) == days[day])
         .toList();
 
-    if (absens.isNotEmpty) {
+    if (absens.isNotEmpty && absens[0].preAbsenCategoryId != 3) {
       clockIn.value = absens.first.begin!;
       clockOut.value = absens.last.end!;
     }
@@ -84,7 +90,7 @@ class HomeController extends GetxController {
   }
 
   Future<OfficeModel> getOffice() async {
-    print("User Token ${_authManager.getToken()!}");
+    // print("User Token ${_authManager.getToken()!}");
     OfficeModel model =
         await OfficeService().fetchOfficesByUserId(_authManager.getToken()!);
 

@@ -69,7 +69,12 @@ class SettingView extends GetView<SettingController> {
                           userDetail('Nomor Hp', user.phone!, context,
                               Icons.perm_phone_msg_sharp),
                           const SizedBox(height: 16),
-                          userDetail('Status Bekerja', user.status!, context,
+                          userDetail(
+                              'Status Bekerja',
+                              user.status! == 'wfo'
+                                  ? 'WFO'
+                                  : 'Petugas Lapangan',
+                              context,
                               Icons.supervised_user_circle),
                           const SizedBox(height: 16),
                           const Divider(thickness: 1.5),

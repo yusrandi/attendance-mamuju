@@ -19,6 +19,7 @@ class AttendanceService extends GetConnect {
     request.fields['nip'] = nip;
     request.fields['location'] = location;
     request.fields['absen_id'] = absenId;
+    request.fields['versi'] = "1.4.0";
 
     if (photo != null) {
       final resFile = await http.MultipartFile.fromPath('photo', photo.path,
@@ -37,14 +38,14 @@ class AttendanceService extends GetConnect {
       var data = json.decode(response.body);
 
       if (data['responsecode'] == '1') {
-        print("Data ${data['responsemsg']}");
+        // print("Data ${data['responsemsg']}");
 
         Get.snackbar("absen bos", "Terima kasih, telah mengisi kehadiran",
             backgroundColor: CoreColor.whiteSoft,
             duration: const Duration(seconds: 2));
         Get.offAllNamed(Routes.BASE);
       } else {
-        print("Data ${data['responsemsg']}");
+        // print("Data ${data['responsemsg']}");
 
         Get.snackbar("SIKEREN", data['responsemsg'],
             backgroundColor: CoreColor.whiteSoft,

@@ -20,3 +20,12 @@ const days = {
   'Sabtu': 6,
   'Minggu': 7,
 };
+const daysLabel = [
+  'Senin',
+  'Selasa',
+  'Rabu',
+  'Kamis',
+  'Jumat',
+  'Sabtu',
+  'Minggu',
+];

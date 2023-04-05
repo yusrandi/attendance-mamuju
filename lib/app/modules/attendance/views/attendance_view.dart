@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:attendance/app/cores/core_colors.dart';
+import 'package:attendance/app/cores/core_constants.dart';
 import 'package:attendance/app/cores/core_styles.dart';
 import 'package:attendance/app/data/models/offices_model.dart';
 import 'package:attendance/app/routes/app_pages.dart';
@@ -297,7 +298,7 @@ class AttendanceView extends GetView<AttendanceController> {
         Obx(() => attendanceController.distanceToOffice.value <=
                     attendanceController.officeRadius.value ||
                 attendanceController.statusUser.value == 'wfh'
-            ? sliderBody()
+            ? sliderBody(context)
             : Text(
                 'anda berada di luar dari jarak yang telah di tentukan',
                 style: Theme.of(context).textTheme.titleLarge,
@@ -483,7 +484,7 @@ class AttendanceView extends GetView<AttendanceController> {
     );
   }
 
-  sliderBody() {
+  sliderBody(BuildContext context) {
     return Obx(
       () => attendanceController.status == Status.running
           ? Center(
@@ -491,36 +492,48 @@ class AttendanceView extends GetView<AttendanceController> {
                 color: CoreColor.primary,
               ),
             )
-          : Container(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Builder(
-                builder: (context) {
-                  final GlobalKey<SlideActionState> _key = GlobalKey();
-                  return SlideAction(
-                    key: _key,
-                    onSubmit: () {
-                      Future.delayed(
-                        const Duration(seconds: 1),
-                        () async =>
-                            await attendanceController.attendanceStore(),
-                      );
-                    },
-                    alignment: Alignment.centerRight,
-                    sliderButtonIcon: Icon(Icons.arrow_forward_ios_rounded,
-                        color: CoreColor.primary),
-                    innerColor: Colors.white,
-                    outerColor: CoreColor.primary,
-                    borderRadius: 16,
-                    child: const Text(
-                      ' Swipe Right to CLOCK IN',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },
+          : attendanceController.isMocked.value
+              ? Text(
+                  'Mohon matikan lokasi palsu anda!',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(color: Colors.red),
+                  textAlign: TextAlign.center,
+                )
+              : sliderBodyAgain(),
+    );
+  }
+
+  Container sliderBodyAgain() {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Builder(
+        builder: (context) {
+          final GlobalKey<SlideActionState> _key = GlobalKey();
+          return SlideAction(
+            key: _key,
+            onSubmit: () {
+              Future.delayed(
+                const Duration(seconds: 1),
+                () async => await attendanceController.attendanceStore(),
+              );
+            },
+            alignment: Alignment.centerRight,
+            sliderButtonIcon:
+                Icon(Icons.arrow_forward_ios_rounded, color: CoreColor.primary),
+            innerColor: Colors.white,
+            outerColor: CoreColor.primary,
+            borderRadius: 16,
+            child: const Text(
+              ' Swipe Right to CLOCK IN',
+              style: TextStyle(
+                color: Colors.white,
               ),
             ),
+          );
+        },
+      ),
     );
   }
 
@@ -535,7 +548,42 @@ class AttendanceView extends GetView<AttendanceController> {
           children: <Widget>[
             for (var item in attendanceController.listAbsen)
               ListTile(
-                title: Text(item.desc!),
+                title: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item.desc!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(fontSize: 14)),
+                            Text(
+                              daysLabel[int.parse(item.days!) - 1],
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "${item.clockIn} - ${item.clockOut}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const Divider()
+                  ],
+                ),
                 onTap: () {
                   attendanceController.absenId.value = item.id!.toString();
                   attendanceController.absenLabel.value = item.desc!;
